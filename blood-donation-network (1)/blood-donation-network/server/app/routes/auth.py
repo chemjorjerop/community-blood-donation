@@ -56,7 +56,7 @@ def register():
 
     db.session.commit()
 
-    access_token = create_access_token(identity=user.id, additional_claims={"role": user.role})
+    access_token = create_access_token(identity=str(user.id), additional_claims={"role": user.role})
     refresh_token = create_refresh_token(identity=user.id)
 
     return jsonify({
@@ -78,7 +78,7 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password_hash, password):
         return jsonify({"error": "Invalid email or password"}), 401
 
-    access_token = create_access_token(identity=user.id, additional_claims={"role": user.role})
+    access_token = create_access_token(identity=str(user.id), additional_claims={"role": user.role})
     refresh_token = create_refresh_token(identity=user.id)
 
     return jsonify({

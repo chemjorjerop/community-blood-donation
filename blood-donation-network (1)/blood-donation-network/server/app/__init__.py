@@ -16,7 +16,7 @@ def create_app(config_class=Config):
     socketio.init_app(app, cors_allowed_origins=app.config["FRONTEND_URL"])
 
     # Registers the WebSocket 'connect' handler (see app/sockets.py)
-    import app.sockets  # noqa: F401
+    from app import sockets  # noqa: F401# noqa: F401
 
     # Blueprints — each owned by whoever built that feature (see file headers)
     from app.routes.auth import auth_bp

@@ -1,6 +1,9 @@
 # Assigned to: Ian — Day 1 (Flask app + PostgreSQL + SQLAlchemy setup)
 #            & Victor — Day 2 (real-time notification layer — socketio.run instead of app.run)
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from app import create_app
 from app.extensions import db, socketio
 
