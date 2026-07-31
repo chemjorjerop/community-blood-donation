@@ -101,7 +101,7 @@ def run_matching(request_id):
     hospital = Hospital.query.get(blood_request.hospital_id)
 
     compatible_donors = find_compatible_donors(blood_request.blood_type, hospital.city, User)
-    ranked = rank_by_distance(compatible_donors)
+    ranked = rank_by_distance(compatible_donors, hospital.city)
 
     created_matches = []
     for donor, distance_km in ranked:
@@ -130,8 +130,13 @@ def run_matching(request_id):
             "hospital_name": hospital.name,
         })
 
+    # Return every current match for this request, not just the ones created
+    # in this run — otherwise a hospital re-running matching after a donor
+    # already matched sees "0 matched" even though the match still exists.
+    all_matches = RequestMatch.query.filter_by(blood_request_id=blood_request.id).all()
+
     return jsonify({
         "request_id": blood_request.id,
         "matches_created": len(created_matches),
-        "matches": [m.to_dict() for m in created_matches],
+        "matches": [m.to_dict() for m in all_matches],
     }), 201

@@ -40,4 +40,30 @@ def create_app(config_class=Config):
     def health():
         return {"status": "ok"}, 200
 
+    # Admin accounts are never created through the public API — only via this
+    # CLI command, run directly on the server by someone with terminal access.
+    import click
+
+    @app.cli.command("create-admin")
+    @click.option("--name", prompt=True)
+    @click.option("--email", prompt=True)
+    @click.option("--password", prompt=True, hide_input=True, confirmation_prompt=True)
+    def create_admin(name, email, password):
+        """Create an admin account. Run with: flask create-admin"""
+        from app.models.user import User
+
+        if User.query.filter_by(email=email).first():
+            click.echo(f"A user with email {email} already exists.")
+            return
+
+        admin = User(
+            name=name,
+            email=email,
+            password_hash=bcrypt.generate_password_hash(password).decode("utf-8"),
+            role="admin",
+        )
+        db.session.add(admin)
+        db.session.commit()
+        click.echo(f"Admin account created: {email}")
+
     return app

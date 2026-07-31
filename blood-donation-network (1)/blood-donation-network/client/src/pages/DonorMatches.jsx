@@ -23,16 +23,15 @@ export default function DonorMatches() {
   const [loading, setLoading] = useState(true)
 
   const loadMatches = async () => {
-    try {
-      // NOTE: exposing a GET /api/matches/mine on the backend is a natural next step —
-      // for now this page relies on matches arriving via the 'new_match' socket event
-      // plus whatever the hospital/admin views already fetched into local state.
-      setLoading(false)
-    } catch (err) {
-      console.error(err)
-      setLoading(false)
-    }
+  try {
+    const res = await api.get('/matches/mine')
+    setMatches(res.data)
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setLoading(false)
   }
+}
 
   useEffect(() => {
     loadMatches()

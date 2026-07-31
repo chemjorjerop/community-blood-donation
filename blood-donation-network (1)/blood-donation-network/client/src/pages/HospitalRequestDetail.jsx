@@ -123,7 +123,7 @@ export default function HospitalRequestDetail() {
               <div className="space-y-2">
                 {matchResult.matches.map((m) => (
                   <div key={m.id} className="flex items-center justify-between p-4 rounded-lg border border-ivory-200">
-                    <span className="text-sm font-medium text-ink-900">Donor #{m.donor_id}</span>
+                    <span className="text-sm font-medium text-ink-900">{m.donor_name || `Donor #${m.donor_id}`}</span>
                     {m.distance_km != null && (
                       <span className="text-xs text-ink-500">{m.distance_km.toFixed(1)} km away</span>
                     )}
