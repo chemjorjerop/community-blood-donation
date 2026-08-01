@@ -1,14 +1,24 @@
-# Assigned to: Ian — Day 1 (Flask app + PostgreSQL + SQLAlchemy setup)
+
 import os
 from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+def _normalize_db_url(url: str) -> str:
+    # Render (and Heroku-style) Postgres URLs often start with "postgres://",
+    # but SQLAlchemy 2.x / Flask-SQLAlchemy 3.x only recognize "postgresql://".
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    return url
+
+
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/blood_donation_db"
+    SQLALCHEMY_DATABASE_URI = _normalize_db_url(
+        os.environ.get(
+            "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/blood_donation_db"
+        )
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
